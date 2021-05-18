@@ -1,25 +1,25 @@
 # Constraint satisfaction problems – report
 
-The task was about using AI to solve two of the most famous CSPs – map/graph colouring and zebra puzzle/Einstein's riddle. Every CSP consist of 3 key elements – variables, domains and contraints. Before implementing the solvers, it is crucial to properly formulate the problems in regard to these 3 elements.
+The task was about using AI to solve two of the most famous CSPs – map/graph colouring and zebra puzzle/Einstein's riddle. Every CSP consists of 3 key elements – variables, domains and constraints. Before implementing the solvers, it is crucial to properly formulate the problems in regard to these 3 elements.
 
 ### Map colouring
-In this problem we have a set of countries sharing the border, which in case of this implementation is represented as a set of vertices in the graph connected with edges. Each country in the map should be coloured possibly with minimal number of colour that no country share the colour with the neighbour. As four colour theorem states:
+In this problem we have a set of countries sharing the border, which in case of this implementation is represented as a set of vertices in the graph connected with edges. Each country in the map should be coloured possibly with a minimal number of colour so that no country shares the colour with the neighbour. As four colour theorem states:
 > "Given any separation of a plane into contiguous regions, producing a figure called a _map_, no more than four colors are required to color the regions of the map so that no two adjacent regions have the same color. _Adjacent_ means that two regions share a common boundary curve segment, not merely a corner where three or more regions meet." – [Wikipedia](https://en.wikipedia.org/wiki/Four_color_theorem)
 
-Therefore, we can expect from the implementation that each map should be coloured using maximally 4 colours. It is also possible to colour some maps with 3 colour (or less if the map is trivial), but it is not consistent.
+Therefore, we can expect from the implementation that each map should be coloured using maximally 4 colours. It is also possible to colour some maps with 3 colours (or less if the map is trivial), but it is not consistent.
 
 Considering all of that, now we can distinguish the most important elements of this problem:
 * **Variables** – in our representation of the problem, these are simply the vertices/nodes in the graph.
-* **Domains** – domains include all the possible values that a variable can have, so in our case, domains consists of available colours.
-* **Constraints** – we have only one type of constraint – neighbouring vertex cannot share the colour with the current vertex. It means that each edge represents a constraint between a pair of variables.
+* **Domains** – domains include all the possible values that a variable can have, so in our case, domains consist of available colours.
+* **Constraints** – we have only one type of constraint – neighbouring vertices cannot share the colour. It means that each edge represents a constraint between a pair of variables.
 
 ### Zebra puzzle
-This problem seems to be a little more complicated – constraints seems to be more complicated and there are more types of them. Also, there is a problem to choose the variables – we can specify them as:
+This problem seems to be a little more complicated – constraints seem to be more complicated and there are more types of them. Also, there is a problem to choose the variables – we can specify them as:
 * houses
 * house colours, cigarettes etc.
 * every available option – red house, milk, snails etc.
 
-In this implementation, the second option with 5 variables was chosen. It simplyfies the constraints but domains become permutations of all available choises. Suming up:
+In this implementation, the second option with 5 variables was chosen. It simplifies the constraints but domains become permutations of all available choices. Summing up:
 
 * **Variables** – house colours, nationalities, pets, drinks, cigarettes
 * **Domains** – permutation of all available options for a given variable. Each variable has 5 available choices, so there are 5! = 120 values in each domain, e.g. house colour:
@@ -29,16 +29,16 @@ In this implementation, the second option with 5 variables was chosen. It simply
 	etc.
 * **Constraints** – in this problem constraints are stated pretty clearly. There are 3 types of constraints in the implementation:
 	* Equality constraints – they relate to constraints like "Nationality X drinks Y"
-	* Neighbourhood contraints – "Nationality X lives next to/to the right of house painted Y"
-	* Position constraint – "Nationality X lives in Yth house"
+	* Neighbourhood constraints – "Nationality X lives next to/to the right of house painted Y"
+	* Position constraint – "Nationality X lives in Y-th house"
 
 ## AI algorithms
 
 ### Backtracking
-This algorithm picks the first available value from the domain removing it from the available choices and check whether all constraints are still satisfied. If so, it proceeds to the next variable, else it continue to pick the values from the domain. If the domain becomes empty, there is when the backtrack happen – it resets the changes done to the current variable, goes back, tries another value from the previous variable and from there tries to proceed in the same manner. When all variables have their values and no constraints are violated – the algorithm successfully finished its work, and if it is at the first variable and its domain is empty – it means that no solution could be found.
+This algorithm picks the first available value from the domain removing it from the available choices and checks whether all constraints are still satisfied. If so, it proceeds to the next variable, else it continues to pick the values from the domain. If the domain becomes empty, there is when the backtrack happens – it resets the changes done to the current variable, goes back, tries another value from the previous variable and from there tries to proceed in the same manner. When all variables have their values and no constraints are violated – the algorithm successfully finished its work, and if it is at the first variable and its domain is empty – it means that no solution could be found.
 
 ### Backtracking with forward checking
-This algorithm use all the previous principles, but there is one, big change – after an successful assignment, it removes values from the next variables' domains that does not satisfy the constraints. Now, in order to backtrack, in the iterative approach, we have to store historical domains to be able to perform all the checks once again for another value assignment. In recursive approach, it is done somewhat automatically, since after one of the recursive calls fails to proceed the previous call will be taken from the stack with the previous domains state.
+This algorithm uses all the previous principles, but there is one big change – after a successful assignment, it removes values from the next variables' domains that do not satisfy the constraints. Now, in order to backtrack, in the iterative approach, we have to store historical domains to be able to perform all the checks once again for another value assignment. In the recursive approach, it is done somewhat automatically, since after one of the recursive calls fails to proceed the previous call will be taken from the stack with the previous domains' state.
 
 ## Performance analysis
 The problems will be tested in regard to time of execution and the number of value assignments.
@@ -71,16 +71,16 @@ For each number of nodes/countries/vertices, 10 maps were generated and coloured
 |BF|50|5ms|103.8**s**|23.8s|38.2s|66|1007877|246130|385211|
 
 ![Time comparison](./images/chart1time.png)
-At the beginning, the time needed is negligible. After 35 variables, we can see how the time grows exponentially. Forward checking significantly reduses the time needed to produce the result, but its grow is also exponential.
-> It is worth to mention that complexity of the problem **heavily** depends on a specific problem. It evidently correlates to number of processed variables but as we can see from minimal and maximal time and also the standard deviation in the last tries, one execution can be even **20000** times longer than the other (e.g. in BF on 50 nodes – 5ms vs 103.8s). In order to make more precise research, much more tries for each number of nodes should be performed (as opposed to current 10 tries per each node number and algorithm). Nevertheless, the trend is pretty clear.
+At the beginning, the time needed is negligible. After 35 variables, we can see how the time grows exponentially. Forward checking significantly reduces the time needed to produce the result, but its growth is also exponential.
+> It is worth mentioning that the complexity of the problem **heavily** depends on a specific problem. It evidently correlates to number of processed variables but as we can see from minimal and maximal time and also the standard deviation in the last tries, one execution can be even **20000** times longer than the other (e.g. in BF on 50 nodes – 5ms vs 103.8s). In order to make more precise research, much more tries for each number of nodes should be performed (as opposed to the current 10 tries per each node number and algorithm). Nevertheless, the trend is pretty clear.
 
 ![Assignments comparison](./images/chart1assignments.png)
-Here we can see how big advantage in case of assignments number forward checking does provide – it almost seems like a linear function. However, taking a closer look on this chart also shows exponential nature of the growth.
+Here we can see how big advantage in case of assignments number forward checking does – it almost seems like a linear function. However, taking a closer look on this chart also shows the exponential nature of the growth.
 ![Assignments FC](./images/chart2assignments.png)
-It is worth to mention that forward checking, besides of being much better at time and assignments number, has also its drawbacks – the memory usage. The historical data about the domains will be stored for each variable times the number of variables, which means that there is a quadratic growth in the memory usage.
+It is worth mentioning that forward checking, besides being much better at time and assignments, has also its drawbacks – the memory usage. The historical data about the domains will be stored for each variable times the number of variables, which means that there is a quadratic growth in the memory usage.
 
 #### 3 colours case:
-In case of colouring the map with only 3 colours, time and performed assignments are not so much important. Time and assignments of a single successfully performed colouring is negligible since we are working on low number of nodes due to the another problem – probability of successful colouring. We did not have to deal with such a problem before, because it is guaranteed that every map can be coloured with 4 colours, but it is a significant problem in case of 3 colours. Considering that, let us compare only the percentage of successful colourings depending on the iteration number. The algorithm does not matter there since the final result is dependent on a graph, not on the algorithm.
+In the case of colouring the map with only 3 colours, time and performed assignments are not so important. Time and assignments of a single successfully performed colouring is negligible since we are working on a low number of nodes due to the other problem – probability of successful colouring. We did not have to deal with such a problem before, because it is guaranteed that every map can be coloured with 4 colours, but it is a significant problem in case of 3 colours. Considering that, let us compare only the percentage of successful colourings depending on the iteration number. The algorithm does not matter there since the final result is dependent on a graph, not on the algorithm.
 
 |Number of nodes|Percentage of successful colourings|
 |--------------:|:---------------------------------:|
@@ -99,7 +99,7 @@ In case of colouring the map with only 3 colours, time and performed assignments
 As we can see, this time there is an exponential decay. The chance pretty quickly became close to 0, but the average time of each successful colouring was 5ms – so the biggest problem there is the number of repetitions to obtain a map coloured in such a manner, rather than the performance of the algorithm.
 
 ### Zebra puzzle
-In case of zebra puzzle, the problem does not provide many ways to investigate it in case of performance. We could randomize the order of elements in the "possible choices" tables but it does not provide any interesting result. Let us just compare the efficiency of solving this problem using backtracking and backtracking with forward checking.
+In the case of the zebra puzzle, the problem does not provide many ways to investigate it in case of performance. We could randomize the order of elements in the "possible choices" tables but it does not provide any interesting result. Let us just compare the efficiency of solving this problem using backtracking and backtracking with forward checking.
 
 |Method|Time|Assignments|
 |-----:|:--:|:---------:|
